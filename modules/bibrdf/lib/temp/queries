@@ -1,0 +1,4 @@
+#test select
+#a = select_sparql_endpoint("SELECT * { ?s ?p ?o }")
+#test insert
+#b = insert_sparql_endpoint("""INSERT DATA { <http://purl.org/dc/elements/contributor> <http://purl.org/dc/elements/title> "A new book2" ; <http://purl.org/dc/elements/creator> "A.N.Other2" .}""")
