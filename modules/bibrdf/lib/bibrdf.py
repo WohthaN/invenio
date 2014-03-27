@@ -1,3 +1,5 @@
+#This will be the entrypoint offering all the available functionality to the outside.
+
 from invenio.bibauthorid_dbinterface import get_all_personids_with_orcid, get_records_of_authors
 from itertools import chain
 from triple_generator import generate_triples

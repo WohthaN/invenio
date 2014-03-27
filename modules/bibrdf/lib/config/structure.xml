@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <root>
   <record graph="http://purl.org/dc/elements/1.1/identifier">
-	<URI  ont="http://purl.org/dc/elements/1.1/identifier"></URI>
+    <URI  ont="http://purl.org/dc/elements/1.1/identifier"></URI>
     <title ont="http://purl.org/dc/elements/1.1/title"></title>
-	<contributor ont="http://xmlns.com/foaf/0.1/contributor_id"></contributor>
+    <contributor ont="http://xmlns.com/foaf/0.1/contributor_id"></contributor>
     <date ont="http://purl.org/dc/elements/1.1/date"></date>
     <doi ont="http://purl.org/dc/elements/1.1/identifier.doi"></doi>
     <isbn ont="http://purl.org/ontology/bibo/isbn"></isbn>
@@ -28,9 +28,9 @@
     <reference ont="http://purl.org/dc/terms/reference"></reference>
   </record>
   <contributor ont="http://xmlns.com/foaf/0.1/contributor_id">
-	  <name ont="http://xmlns.com/foaf/0.1/name"></name>
-	  <affiliation ont="http://xmlns.com/foaf/0.1/affiliation"></affiliation>
-	  <personid ont="http://xmlns.com/foaf/0.1/inspire_person_id"></personid>
+     <name ont="http://xmlns.com/foaf/0.1/name"></name>
+     <affiliation ont="http://xmlns.com/foaf/0.1/affiliation"></affiliation>
+     <personid ont="http://xmlns.com/foaf/0.1/inspire_person_id"></personid>
   </contributor>
   <person as="http://xmlns.com/foaf/0.1/Person" graph="http://xmlns.com/foaf/0.1/inspire_person_id" ont="http://xmlns.com/foaf/0.1/inspire_person_id">
     <name ont="http://xmlns.com/foaf/0.1/name"></name>
