@@ -17,7 +17,7 @@ class Push_orcid():
     def __init__(self, personid, access_token = None):
         self.orcidid = get_orcid_id_of_author(personid)[0][0]
         self.access_token = access_token
-    
+
         #self.orcid_url = 'https://api.sandbox.orcid.org/v1.1/%s/orcid-works' % self.orcidid
         self.orcid_url = 'https://sandbox.orcid.org'
         self.orcid_data = urlparse.urlparse(self.orcid_url)
@@ -27,7 +27,7 @@ class Push_orcid():
         }
         self.connection = httplib.HTTPConnection(self.orcid_data.hostname, self.orcid_data.port)
 
-        self.tree = etree.parse('orcid.xml')
+        self.tree = etree.parse('./config/orcid.xml')
         root = self.tree.getroot()
 
         orcid_work_tag = root.find('*/*/*/*')

@@ -1,4 +1,3 @@
-from rdflib import *
 from lxml import etree
 
 from datadicts.datadict import DataDict
@@ -17,7 +16,7 @@ CFG_PROCESSES = 8
 def get_configuration_map():
     entity_map = {'record':Record, 'person':Person, 'contributor':Contributor}
     class_map = {}
-    tree = etree.parse("structure.xml")
+    tree = etree.parse("./config/structure.xml")
     root = tree.getroot()
     children = root.getchildren()
     for c in children:
@@ -75,25 +74,14 @@ def _generate(datadicts):
         g.extend(_generate_triples(j))
     return g
 
-def transform_to_rdflib(graph):
-    g = Graph()
-    for node in graph:
-        g.add((_rdflib_printer(node[0]), _rdflib_printer(node[1]), _rdflib_printer(node[2])))
-    return g
 
-def _rdflib_printer(val):
-    if val[0] == 'URI':
-        return URIRef(val[1])
-    if val[0] == 'Literal':
-        return Literal(val[1])
-
-def generate_triples(jobs):
+def generate_triples(jobs_list):
     '''
     Export the given jobs to a list of triples.
     A job is a list of ('type', id) where 'type' can be either person or record
     '''
     entity_map = {'record':Record, 'person':Person, 'contributor':Contributor}
-    jobs = [entity_map[i[0]](i[1]) for i in jobs]
+    jobs = [entity_map[i[0]](i[1]) for i in jobs_list]
     return _generate(jobs)
 
 #TODO: modify schedule_workers to pass around result values
