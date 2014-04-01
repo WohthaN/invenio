@@ -8,15 +8,20 @@ from datadicts.contributor import Contributor
 from invenio.bibauthorid_general_utils import memoized, schedule_workers
 
 
+CFG = {
+    'STRUCTURE_XML':"./config/structure.xml",
+    'CFG_PROCESS_SLICE_SIZE': 10,
+    'CFG_PROCESSES': 8,
+}
 
-CFG_PROCESS_SLICE_SIZE = 10
-CFG_PROCESSES = 8
+
+
 
 @memoized
 def get_configuration_map():
     entity_map = {'record':Record, 'person':Person, 'contributor':Contributor}
     class_map = {}
-    tree = etree.parse("./config/structure.xml")
+    tree = etree.parse(CFG['STRUCTURE_XML'])
     root = tree.getroot()
     children = root.getchildren()
     for c in children:
