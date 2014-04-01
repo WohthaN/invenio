@@ -22,6 +22,9 @@ class Record(DataDict):
             'id' : self._get_recid,
             'title' : self._get_title,
             'date' : self._get_date,
+            'date_year': self._get_date_year,
+            'date_month': self._get_date_month,
+            'date_day': self._get_date_day,
             'publication-date' : self._get_date,
             'contributor': self._get_contributor,
             'URI': self._get_uri,
@@ -81,6 +84,27 @@ class Record(DataDict):
 
     def _get_date(self):
         return self.sanitize([record_get_field_value(self.recstruct, '269', '', '', 'c')])
+
+    def _get_date_year(self):
+        date = self._get_date()
+        try:
+            return self.sanitize(date.split('-')[0])
+        except KeyError:
+            return self.sanitize('')
+
+    def _get_date_month(self):
+        date = self._get_date()
+        try:
+            return self.sanitize(date.split('-')[1])
+        except KeyError:
+            return self.sanitize('')
+
+    def _get_date_day(self):
+        date = self._get_date()
+        try:
+            return self.sanitize(date.split('-')[2])
+        except KeyError:
+            return self.sanitize('')
 
     def _get_doi(self):
         return self.sanitize(_get_doi_for_paper(self.recid, self.recstruct))
