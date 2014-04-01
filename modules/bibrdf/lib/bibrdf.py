@@ -21,4 +21,4 @@ if __name__ == "__main__":
      CFG['STRUCTURE_XML'] = "./config/structure-orcid.xml"
      triples = generate_triples([list(records)[0]])
      g = transform_to_rdflib(triples)
-     export_to_xml(g)
+     #export_to_xml(g)

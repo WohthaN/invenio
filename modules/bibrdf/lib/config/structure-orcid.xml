@@ -2,35 +2,7 @@
 <root>
   <record graph="orcid-work">
     <title ont="work-title"></title>
-    <contributor ont="contributor"></contributor>
-    <date ont="http://purl.org/dc/elements/1.1/date"></date>
-    <doi ont="http://purl.org/ontology/bibo/doi"></doi>
-    <source ont="http://purl.org/dc/terms/source"></source>
-    <language ont="http://purl.org/dc/terms/language"></language>
-    <alternative ont="http://purl.org/dc/terms/alternative"></alternative>
-    <edition ont="http://purl.org/ontology/bibo/edition"></edition>
-    <publisher ont="http://purl.org/dc/elements/1.1/publisher"></publisher>
-    <pages ont="http://purl.org/ontology/bibo/numPages"></pages>
-    <bookseries ont="http://purl.org/ontology/bibo/edition"></bookseries>
-    <volume ont="http://purl.org/ontology/bibo/locator"></volume>
-    <degree ont="http://purl.org/ontology/bibo/degree"></degree>
-    <abstract ont="http://purl.org/dc/terms/abstract"></abstract>
-    <license ont="http://purl.org/dc/terms/license"></license>
-    <subject ont="http://purl.org/dc/elements/1.1/subject"></subject>
-    <pages ont="http://purl.org/ontology/bibo/pageStart"></pages>
-    <volume ont="http://purl.org/ontology/bibo/volume"></volume>
-    <issue ont="http://purl.org/ontology/bibo/issue"></issue>
-    <ispartof ont="http://purl.org/dc/terms/isPartOf"></ispartof>
-    <reference ont="http://purl.org/dc/terms/reference"></reference>
+    <date ont="date"></date>
+    <doi ont="doi"></doi>
   </record>
-  <contributor ont="http://xmlns.com/foaf/0.1/contributor_id">
-     <name ont="http://xmlns.com/foaf/0.1/name"></name>
-     <affiliation ont="http://xmlns.com/foaf/0.1/affiliation"></affiliation>
-     <personid ont="http://xmlns.com/foaf/0.1/inspire_person_id"></personid>
-  </contributor>
-  <person as="http://xmlns.com/foaf/0.1/Person" graph="http://xmlns.com/foaf/0.1/inspire_person_id" ont="http://xmlns.com/foaf/0.1/inspire_person_id">
-    <name ont="http://xmlns.com/foaf/0.1/name"></name>
-    <personid ont="http://xmlns.com/foaf/0.1/inspire_person_id"></personid>>
-    <orcid ont="http://xmlns.com/foaf/0.1/orcid"></orcid>
-  </person>
 </root>
