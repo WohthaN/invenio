@@ -490,8 +490,9 @@ def precompute_cache_for_person(person_ids=None, all_persons=False, only_expired
     if person_ids:
         pids |= set(person_ids)
 
-    empty_pids = remove_empty_authors(remove=False)
-    pids = pids - empty_pids
+    #This takes way too long...
+    #empty_pids = remove_empty_authors(remove=False)
+    #pids = pids - empty_pids
 
     last = len(pids)
 
