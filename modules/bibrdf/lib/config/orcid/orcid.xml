@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation=https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.1.xsd">
+    <message-version>
+        1.1
+    </message-version>
+    <orcid-profile>
+        <orcid-activities>
+            <orcid-works>
+                {%- for record in records %}
+                <orcid-work>
+                    <work-title>
+                        {%-  for title in record.title %}
+                        <title>
+                            {{ title }}
+                        </title>
+                        {%- endfor %}
+                    </work-title>
+                    {%- for abs in record.abstract %}
+                    <short-description>
+                        {{ abs }}
+                    </short-description>
+                    {%- endfor %}
+                    <publication-date>
+                        {%- for date_year in record.date_year %}
+                        <year>
+                            {{ date_year }}
+                        </year>
+                        {%- endfor %}
+                        {%- for date_month in record.date_month %}
+                        <month>
+                            {{ date_month }}
+                        </month>
+                        {%- endfor %}
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            {%- for doi in record.doi %}
+                            <work-external-identifier-type>DOI</work-external-identifier-type>
+                            <work-external-identifier-id>{{ doi }}</work-external-identifier-id>
+                            {%- endfor %}
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    {%- for uri in record.URI %}
+                    <url>
+                        {{ uri }}
+                    </url>
+                    {%- endfor %}
+                    <work-contributors>
+                        {%- for contributor in record.contributor %}
+                        <contributor>
+                            {%- for name in contributor.name %}
+                            <credit-name>
+                                    {{ name }}
+                            </credit-name>
+                            {%- endfor %}
+                            <contributor-attributes>
+                                    <contributor-role>
+                                        author
+                                    </contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                        {%- endfor %}
+                    </work-contributors>
+                </orcid-work>
+                {%- endfor %}
+            </orcid-works>
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

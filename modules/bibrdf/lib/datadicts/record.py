@@ -88,23 +88,23 @@ class Record(DataDict):
     def _get_date_year(self):
         date = self._get_date()
         try:
-            return self.sanitize(date.split('-')[0])
-        except KeyError:
-            return self.sanitize('')
+            return self.sanitize([date[0].split('-')[0]])
+        except IndexError:
+            return self.sanitize([''])
 
     def _get_date_month(self):
         date = self._get_date()
         try:
-            return self.sanitize(date.split('-')[1])
-        except KeyError:
-            return self.sanitize('')
+            return self.sanitize([date[0].split('-')[1]])
+        except IndexError:
+            return self.sanitize([''])
 
     def _get_date_day(self):
         date = self._get_date()
         try:
-            return self.sanitize(date.split('-')[2])
-        except KeyError:
-            return self.sanitize('')
+            return self.sanitize([date[0].split('-')[2]])
+        except IndexError:
+            return self.sanitize([''])
 
     def _get_doi(self):
         return self.sanitize(_get_doi_for_paper(self.recid, self.recstruct))
