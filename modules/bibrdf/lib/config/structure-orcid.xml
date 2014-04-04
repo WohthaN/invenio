@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<root>
-  <record graph="orcid-work">
-    <title ont="work-title"></title>
-    <date ont="date"></date>
-    <doi ont="doi"></doi>
-  </record>
-</root>
