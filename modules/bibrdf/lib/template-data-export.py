@@ -1,5 +1,5 @@
-from jinja2 import Template, FileSystemLoader, Environment
-from datadicts.record import Record
+from jinja2 import FileSystemLoader, Environment
+from datadicts.record import *
 
 
 env = Environment(loader=FileSystemLoader('./config/orcid/'), auto_reload=True)
