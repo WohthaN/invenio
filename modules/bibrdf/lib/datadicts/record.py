@@ -176,27 +176,28 @@ class Record(DataDict):
         return self.sanitize([record_get_field_value(self.recstruct, '999C5')])
 
     def _get_work_type(self):
+
         a = record_get_field_values(self.recstruct, '980','','','a')
         if 'book' in [x.lower() for x in a]:
-            return 'Book'
+            return self.sanitize(['Book'])
 
         a = record_get_field_values(self.recstruct, '502','','','b')
         if 'phd' in [x.lower() for x in a]:
-            return 'Dissertation'
+            return self.sanitize(['Dissertation'])
 
         a = record_get_field_values(self.recstruct, '980','','','a')
         if 'conferencepaper' in [x.lower() for x in a]:
-            return 'Conference-Paper'
+            return self.sanitize(['Conference-Paper'])
 
         a = record_get_field_values(self.recstruct, '980','','','a')
         if 'data' in [x.lower() for x in a]:
-            return 'Dataset'
+            return self.sanitize(['Dataset'])
 
         a = record_get_field_values(self.recstruct, '980','','','a')
         published_flag = 'published' in [x.lower() for x in a]
         if (published_flag and
             record_get_field_values(self.recstruct, '773','','','p')):
-            return 'Journal-Article'
+            return self.sanitize(['Journal-Article'])
 
         a = record_get_field_instances(self.recstruct, '035')
         for instance in a:
@@ -208,7 +209,9 @@ class Record(DataDict):
                 elif tup[0] == 'a':
                     field_a = True
             if field_a and field_9 and not published_flag:
-                return 'Working-Paper'
+                return self.sanitize(['Working-Paper'])
+
+        return self.sanitize([''])
 
 
 
