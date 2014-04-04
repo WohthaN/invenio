@@ -34,9 +34,11 @@
                         </month>
                         {%- endfor %}
                     </publication-date>
+                    {%- for wt in record.work_type %}
                     <work-type>
-                        {{ record.work_type }}
+                        {{ wt }}
                     </work-type>
+                    {%- endfor %}
                     <work-external-identifiers>
                         <work-external-identifier>
                             {%- for doi in record.doi %}
