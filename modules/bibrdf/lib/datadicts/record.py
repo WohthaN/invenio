@@ -1,5 +1,5 @@
 from invenio.search_engine import get_record
-from invenio.bibrecord import record_get_field_value
+from invenio.bibrecord import record_get_field_value, record_get_field_values, record_get_field_instances
 from invenio import bibauthorid_dbinterface
 from contributor import Contributor
 from invenio.bibauthorid_dbinterface import get_all_signatures_of_paper, _get_doi_for_paper, get_personid_signature_association_for_paper
@@ -48,7 +48,8 @@ class Record(DataDict):
             'volume' : self._get_pub_info_volume,
             'issue' : self._get_pub_info_issue,
             'ispartof' : self._get_pub_info_conf_pappers,
-            'reference' : self._get_reference
+            'reference' : self._get_reference,
+            'work_type' : self._get_work_type,
         }
 
     def keys(self):
@@ -173,6 +174,42 @@ class Record(DataDict):
 
     def _get_reference(self):
         return self.sanitize([record_get_field_value(self.recstruct, '999C5')])
+
+    def _get_work_type(self):
+        a = record_get_field_values(self.recstruct, '980','','','a')
+        if 'book' in [x.lower() for x in a]:
+            return 'Book'
+
+        a = record_get_field_values(self.recstruct, '502','','','b')
+        if 'phd' in [x.lower() for x in a]:
+            return 'Dissertation'
+
+        a = record_get_field_values(self.recstruct, '980','','','a')
+        if 'conferencepaper' in [x.lower() for x in a]:
+            return 'Conference-Paper'
+
+        a = record_get_field_values(self.recstruct, '980','','','a')
+        if 'data' in [x.lower() for x in a]:
+            return 'Dataset'
+
+        a = record_get_field_values(self.recstruct, '980','','','a')
+        published_flag = 'published' in [x.lower() for x in a]
+        if (published_flag and
+            record_get_field_values(self.recstruct, '773','','','p')):
+            return 'Journal-Article'
+
+        a = record_get_field_instances(self.recstruct, '035')
+        for instance in a:
+            field_a = False
+            field_9 = False
+            for tup in instance[0]:
+                if tup[0] == '9':
+                    field_9 = True
+                elif tup[0] == 'a':
+                    field_a = True
+            if field_a and field_9 and not published_flag:
+                return 'Working-Paper'
+
 
 
 #marc field  |  description          |   rdf mapping
