@@ -1,6 +1,5 @@
 from invenio.search_engine import get_record
 from invenio.bibrecord import record_get_field_value, record_get_field_values, record_get_field_instances
-from invenio import bibauthorid_dbinterface
 from contributor import Contributor
 from invenio.bibauthorid_dbinterface import get_all_signatures_of_paper, _get_doi_for_paper, get_personid_signature_association_for_paper
 
@@ -21,6 +20,7 @@ class Record(DataDict):
             'record' : self._get_recid,
             'id' : self._get_recid,
             'title' : self._get_title,
+            'subtitle' : self._get_subtitle,
             'date' : self._get_date,
             'date_year': self._get_date_year,
             'date_month': self._get_date_month,
@@ -69,6 +69,9 @@ class Record(DataDict):
 
     def _get_title(self):
         return self.sanitize([record_get_field_value(self.recstruct, '245', '', '', 'a')])
+
+    def _get_subtitle(self):
+        return self.sanitize([record_get_field_value(self.recstruct, '245', '', '', 'b')])
 
     def _get_contributor(self):
         signatures = get_all_signatures_of_paper(self.recid)
@@ -212,7 +215,6 @@ class Record(DataDict):
                 return self.sanitize(['Working-Paper'])
 
         return self.sanitize([''])
-
 
 
 #marc field  |  description          |   rdf mapping
