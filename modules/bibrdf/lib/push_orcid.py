@@ -21,6 +21,10 @@ import os.path
 
 from jinja2 import FileSystemLoader, Environment
 
+class Push_to_orcid():
+    def __init__(self, access_token=None):
+        self.access_token = access_token
+
 class Push_orcid():
     def __init__(self, personid = None, orcid = None, access_token = None, records = []):
         #set ORCID urls
