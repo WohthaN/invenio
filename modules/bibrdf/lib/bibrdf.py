@@ -1,9 +1,8 @@
 #This will be the entrypoint offering all the available functionality to the outside.
 
 from invenio.bibauthorid_dbinterface import get_all_personids_with_orcid, get_records_of_authors
-from itertools import chain
 from triple_generator import generate_triples, CFG
-from rdflib_utils import *
+from template_data_export import export
 
 if __name__ == "__main__":
      print 'Persons'
@@ -17,8 +16,10 @@ if __name__ == "__main__":
      #print "Exported %s persons and %s records" % (len(persons), len(records))
 
 
-     print "Generating  orcid xml"
-     CFG['STRUCTURE_XML'] = "./config/structure-orcid.xml"
+     print "Generating orcid xml"
      triples = generate_triples([list(records)[0]])
-     g = transform_to_rdflib(triples)
-     #export_to_xml(g)
+     print triples
+     xml = export([ CFG['entity_map'][x[0]](x[1]) for x in records ], './templates/orcid.xml')
+     print xml
+
+
