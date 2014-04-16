@@ -12,6 +12,7 @@ CFG = {
     'STRUCTURE_XML':"./config/structure.xml",
     'CFG_PROCESS_SLICE_SIZE': 10,
     'CFG_PROCESSES': 8,
+    'entity_map': {'record':Record, 'person':Person, 'contributor':Contributor}
 }
 
 
@@ -19,7 +20,7 @@ CFG = {
 
 @memoized
 def get_configuration_map():
-    entity_map = {'record':Record, 'person':Person, 'contributor':Contributor}
+    entity_map = CFG['entity_map']
     class_map = {}
     tree = etree.parse(CFG['STRUCTURE_XML'])
     root = tree.getroot()
@@ -30,7 +31,7 @@ def get_configuration_map():
 
 
 def _printer(*args):
-    #print ''.join(str(x) for x in args)
+    #print ' '.join(str(x) for x in args)
     pass
 
 def _generate_triples(datadict, identifier=None, graph_name=None):
@@ -85,7 +86,7 @@ def generate_triples(jobs_list):
     Export the given jobs to a list of triples.
     A job is a list of ('type', id) where 'type' can be either person or record
     '''
-    entity_map = {'record':Record, 'person':Person, 'contributor':Contributor}
+    entity_map = CFG['entity_map']
     jobs = [entity_map[i[0]](i[1]) for i in jobs_list]
     return _generate(jobs)
 
