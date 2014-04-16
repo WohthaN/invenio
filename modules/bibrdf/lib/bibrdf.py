@@ -19,7 +19,9 @@ if __name__ == "__main__":
      print "Generating orcid xml"
      triples = generate_triples([list(records)[0]])
      print triples
-     xml = export([ CFG['entity_map'][x[0]](x[1]) for x in records ], './templates/orcid.xml')
+     xml = export([ CFG['entity_map'][x[0]](x[1]) for x in records ], 'orcid.xml')
      print xml
+
+
 
 
