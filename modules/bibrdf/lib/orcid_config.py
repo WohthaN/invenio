@@ -1,0 +1,6 @@
+CFG_ORCID_USERNAME = ""
+CFG_ORCID_PASSWORD = ""
+CFG_CLIENT_ID = ""
+CFG_CLIENT_SECRET = ""
+CFG_ORCID_URL = "https://sandbox.orcid.org"
+CFG_ORCID_API_URL = "https://api.sandbox.orcid.org"
