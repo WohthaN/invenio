@@ -1,8 +1,8 @@
-from invenio.search_engine import get_record
 from invenio.bibauthorid_dbinterface import get_records_of_authors, get_orcid_id_of_author
-from invenio.webauthorprofile_orcidutils import get_dois_from_orcid
+from invenio.webauthorprofile_orcidutils import get_dois_from_orcid, get_access_token_from_orcid
 from record import Record
 from orcid_config import *
+
 
 import urlparse
 import httplib
@@ -23,7 +23,18 @@ from jinja2 import FileSystemLoader, Environment
 
 class Push_to_orcid():
     def __init__(self, access_token=None):
-        self.access_token = access_token
+        if access_token:
+            self.access_token = access_token
+        else:
+            orcid_params = {"client_id" :CFG_CLIENT_ID,
+                            "client_secret" : CFG_CLIENT_SECRET,
+                            "grant_type" : "authorization_code",
+                            "code" : '',
+                            "redirect_url" : "https://developers.google.com/oauthplayground",
+                            "scope" : "/orcid-works/create",
+                            }
+
+            self.access_token = get_access_token_from_orcid(orcid_params)
 
 class Push_orcid():
     def __init__(self, personid = None, orcid = None, access_token = None, records = []):
@@ -113,7 +124,12 @@ class Push_orcid():
 
     def _get_access_token(self):
         data = BytesIO()
-        params = urllib.urlencode({"client_id" : self.client_id, "client_secret" : self.client_secret, "grant_type" : "authorization_code", "code" : self.authorization_code, "redirect_url" : "https://developers.google.com/oauthplayground" })
+        params = urllib.urlencode({"client_id" : self.client_id,
+                                   "client_secret" : self.client_secret,
+                                   "grant_type" : "authorization_code",
+                                   "code" : self.authorization_code,
+                                   "redirect_url" : "https://developers.google.com/oauthplayground"
+                                   })
 
         c = pycurl.Curl()
         c.setopt(pycurl.URL, "%s/oauth/token" % self.apiurl)

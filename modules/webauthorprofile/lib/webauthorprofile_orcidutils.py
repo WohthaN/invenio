@@ -28,7 +28,8 @@ from invenio.webauthorprofile_config import CFG_WEBAUTHORPROFILE_ORCID_ENDPOINT_
 
 
 def get_dois_from_orcid(orcid_id):
-    access_token = _get_access_token_from_orcid('/read-public', extra_params={'grant_type': 'client_credentials'})
+    access_token = get_access_token_from_orcid(params={'scope':'/read-public',
+                                                       'grant_type': 'client_credentials'})
 
     if not access_token:
         return None
@@ -64,7 +65,6 @@ class Orcid_server_error(Exception):
     def __str__(self):
         return "Http response code 500. Orcid Internal Server Error."
 
-
 class Orcid_request_error(Exception):
     '''
     Exception raised when the server status is:
@@ -82,33 +82,33 @@ class Orcid_request_error(Exception):
         return "Http response code %s." % repr(self.code)
 
 
-def _get_access_token_from_orcid(scope, extra_params=None, response_format='json'):
+def get_access_token_from_orcid(params, response_format='json'):
     '''
     Returns a multi-use access token using the client credentials. With the
     specific access token we can retreive public data of the given scope.
 
-    @param scope: scope
-    @type scope: str
-    @param extra_data: additional parameters {field: value}
+    @param params: parameters {field: value}. {'scope':'blabla'} is mandatory!
     @type extra_data: dict {str: str}
 
     @return: access token
     @rtype: str
     '''
     # TODO: when we already have a valid access token return that instead of creating a new one
+    # but of course this should be guarded by a default parameter. This method is going to be used
+    # in many different contexts
     from invenio.access_control_config import CFG_OAUTH2_CONFIGURATIONS
 
-    payload = {'client_id': CFG_OAUTH2_CONFIGURATIONS['orcid']['consumer_key'],
-               'client_secret': CFG_OAUTH2_CONFIGURATIONS['orcid']['consumer_secret'],
-               'scope': scope }
+    if 'scope' not in params:
+        raise Exception('get_access_token_from_orcid: "scope" must be included in params!')
 
-    if extra_params:
-        for field, value in extra_params.iteritems():
-            payload[field] = value
+    if 'client_id' not in params:
+        default_params = {'client_id': CFG_OAUTH2_CONFIGURATIONS['orcid']['consumer_key'],
+                          'client_secret': CFG_OAUTH2_CONFIGURATIONS['orcid']['consumer_secret']}
+        params.update(default_params)
 
     request_url = '%s' % (CFG_OAUTH2_CONFIGURATIONS['orcid']['access_token_url'])
     headers = {'Accept': 'application/json'}
-    response = requests.post(request_url, data=payload, headers=headers)
+    response = requests.post(request_url, data=params, headers=headers)
     code = response.status_code
     res = None
     # response.raise_for_status()
