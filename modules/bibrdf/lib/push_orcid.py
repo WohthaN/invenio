@@ -18,6 +18,7 @@ import json
 import cStringIO
 from io import BytesIO
 import os.path
+import pprint
 
 from jinja2 import FileSystemLoader, Environment
 
@@ -37,7 +38,7 @@ class Push_to_orcid():
             self.access_token = get_access_token_from_orcid(orcid_params)
 
 class Push_orcid():
-    def __init__(self, personid = None, orcid = None, access_token = None, records = []):
+    def __init__(self, personid, orcid = None, access_token = None):
         #set ORCID urls
         self.url = CFG_ORCID_URL
         self.apiurl = CFG_ORCID_API_URL
@@ -61,21 +62,57 @@ class Push_orcid():
 
         record_ids = get_records_of_authors([personid])
         dois = [doi.encode('UTF8') for doi in get_dois_from_orcid(self.orcid)]
+        ext_identifiers = []
 
-        print "dois: ", dois
+        self.pp = pprint.PrettyPrinter(indent=2)
+        self.recs = []
+        raw_orcid_public_data = json.loads(_get_public_data_from_orcid_public(self.orcid))
+        try:
+            works = raw_orcid_public_data['orcid-profile']['orcid-activities']['orcid-works']['orcid-work']
+
+            for work in works:
+                print 'work: ', work
+                try:
+                    print 'work[work-external-identifiers]: ', work['work-external-identifiers']['work-external-identifier']
+                    identifiers = work['work-external-identifiers']['work-external-identifier']
+                    for identifier in identifiers:
+                        print 'identifier: ', identifier, '\n'
+                        print identifier['work-external-identifier-type']
+                        if identifier['work-external-identifier-type'] == 'OTHER_ID':
+                            #print 'kur\n'
+                            #print identifier['work-external-identifier-id']['value']
+
+                            ext_identifiers.append(identifier['work-external-identifier-id']['value'])
+                            print '===================='
+                            print 'self.ext_identifiers: ', ext_identifiers
+                except:
+                    pass
+        except:
+            pass
+
+        #self.ext_identifiers = json.loads(_get_public_data_from_orcid_public(self.orcid))
+
+        #print "==============="
+        #print "test"
+        #print "ext_identifiers: ", self.ext_identifiers
+
+        #print "dois: ", dois
         for record_id in record_ids:
             rec = Record(record_id)
-            print "rec['doi']: ", rec['doi']
+            #print "rec['doi']: ", rec['doi']
             if not any(d in dois for d in rec['doi']):
-                recs.append(Record(record_id))
-            else:
-                print "doi already in"
+                if not any(ext in ext_identifiers for ext in rec['id']):
+                    recs.append(Record(record_id))
+            #else:
+                #print "doi already in"
+            self.recs = recs
 
-        print "recs: ", recs
+        #print "recs: ", recs
         self.export_records_to_xml(recs)
         self.push_file_to_orcid()
         recs = None
         dois = None
+        ext_identifiers = None
 
     def _set_cookie(self):
         params = urllib.urlencode({'userId' : self.username, 'password' : self.password})
