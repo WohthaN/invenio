@@ -40,6 +40,7 @@
                     </work-type>
                     {%- endfor %}
                     <work-external-identifiers>
+		        {%- if record.doi  %}
                         <work-external-identifier>
                             {%- for doi in record.doi %}
                             <work-external-identifier-type>DOI</work-external-identifier-type>
