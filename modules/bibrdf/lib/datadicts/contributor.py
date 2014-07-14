@@ -2,7 +2,9 @@ from invenio.bibauthorid_dbinterface import get_name_by_bibref, get_grouped_reco
 
 from datadict import DataDict, NotExistent
 
+
 class Contributor(DataDict):
+
     def __str__(self):
         return self._get_cid()[0]
 
@@ -18,12 +20,12 @@ class Contributor(DataDict):
                 self.personid = None
 
         self.map = {
-            'contributor' : self._get_cid,
-            'id' : self._get_cid,
-            'personid' : self._get_personid,
-            'name' : self._get_name,
-            'affiliation' : self._get_affiliation,
-            'orcid' : self._get_orcid
+            'contributor': self._get_cid,
+            'id': self._get_cid,
+            'personid': self._get_personid,
+            'name': self._get_name,
+            'affiliation': self._get_affiliation,
+            'orcid': self._get_orcid
         }
 
     def __getitem__(self, key):

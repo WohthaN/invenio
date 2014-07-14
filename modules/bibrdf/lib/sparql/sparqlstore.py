@@ -49,6 +49,7 @@ from rdflib import Variable, Namespace, BNode, URIRef, Literal
 import httplib
 import urlparse
 
+
 class NSSPARQLWrapper(SPARQLWrapper):
     nsBindings = {}
 
@@ -75,7 +76,7 @@ class NSSPARQLWrapper(SPARQLWrapper):
         """
         self.queryType = self._parseQueryType(query)
         self.queryString = self.injectPrefixes(query)
-        
+
     def injectPrefixes(self, query):
         return '\n'.join(
             ['\n'.join(['PREFIX %s: <%s>' % (key, val)
@@ -150,6 +151,7 @@ def CastToTerm(node):
 
 
 class SPARQLStore(NSSPARQLWrapper, Store):
+
     """
     An RDFLib store around a SPARQL endpoint
 
@@ -167,11 +169,11 @@ class SPARQLStore(NSSPARQLWrapper, Store):
     is the union of all graphs (tdb:unionDefaultGraph in the Fuseki config)
     If this is set this will work fine.
 
-    .. warning:: The SPARQL Store does not support blank-nodes!  
+    .. warning:: The SPARQL Store does not support blank-nodes!
 
                  As blank-nodes acts as variables in SPARQL queries
                  there is no way to query for a particular blank node.
-                 
+
                  See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes
 
 
@@ -230,8 +232,9 @@ class SPARQLStore(NSSPARQLWrapper, Store):
         """ """
         raise TypeError('The SPARQL store is read only')
 
-    def add(self, (subject, predicate, obj), context=None, quoted=False):
+    def add(self, xxx_todo_changeme, context=None, quoted=False):
         """ Add a triple to the store of triples. """
+        (subject, predicate, obj) = xxx_todo_changeme
         raise TypeError('The SPARQL store is read only')
 
     def addN(self, quads):
@@ -244,8 +247,9 @@ class SPARQLStore(NSSPARQLWrapper, Store):
         """
         raise TypeError('The SPARQL store is read only')
 
-    def remove(self, (subject, predicate, obj), context):
+    def remove(self, xxx_todo_changeme1, context):
         """ Remove a triple from the store """
+        (subject, predicate, obj) = xxx_todo_changeme1
         raise TypeError('The SPARQL store is read only')
 
     def query(self, query,
@@ -274,15 +278,16 @@ class SPARQLStore(NSSPARQLWrapper, Store):
 
         return Result.parse(SPARQLWrapper.query(self).response)
 
-    def triples(self, (s, p, o), context=None):
+    def triples(self, xxx_todo_changeme2, context=None):
         """
         SELECT ?subj ?pred ?obj WHERE { ?subj ?pred ?obj }
         """
-
-        if ( isinstance(s, BNode) or
-             isinstance(p, BNode) or 
-             isinstance(o, BNode) ): 
-            raise Exception("SPARQLStore does not support Bnodes! See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes")
+        (s, p, o) = xxx_todo_changeme2
+        if (isinstance(s, BNode) or
+           isinstance(p, BNode) or
+           isinstance(o, BNode)):
+            raise Exception(
+                "SPARQLStore does not support Bnodes! See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes")
 
         vars = []
         if not s:
@@ -316,7 +321,7 @@ class SPARQLStore(NSSPARQLWrapper, Store):
                    rt.get(p, p),
                    rt.get(o, o)), None
 
-    def triples_choices(self, (subject, predicate, object_), context=None):
+    def triples_choices(self, xxx_todo_changeme3, context=None):
         """
         A variant of triples that can take a list of terms instead of a
         single term in any slot.  Stores can implement this to optimize
@@ -324,6 +329,7 @@ class SPARQLStore(NSSPARQLWrapper, Store):
         which will iterate over each term in the list and dispatch to
         triples.
         """
+        (subject, predicate, object_) = xxx_todo_changeme3
         raise NotImplementedError('Triples choices currently not supported')
 
     def __len__(self, context=None):
@@ -386,6 +392,7 @@ class SPARQLStore(NSSPARQLWrapper, Store):
 
 
 class SPARQLUpdateStore(SPARQLStore):
+
     """
     A store using SPARQL queries for read-access
     and SPARQL Update for changes
@@ -395,11 +402,11 @@ class SPARQLUpdateStore(SPARQLStore):
 
     For Graph objects, everything works as expected.
 
-    .. warning:: The SPARQL Update Store does not support blank-nodes!  
+    .. warning:: The SPARQL Update Store does not support blank-nodes!
 
                  As blank-nodes acts as variables in SPARQL queries
                  there is no way to query for a particular blank node.
-                 
+
                  See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes
 
 
@@ -424,7 +431,7 @@ class SPARQLUpdateStore(SPARQLStore):
         self.postAsEncoded = postAsEncoded
         self.headers = {'Content-type': SPARQL_POST_ENCODED,
                         'Connection': 'Keep-alive'}
-        
+
         if not self.postAsEncoded:
             self.headers['Content-type'] = SPARQL_POST_UPDATE
 
@@ -493,11 +500,11 @@ class SPARQLUpdateStore(SPARQLStore):
         assert not quoted
         (subject, predicate, obj) = spo
 
-        if ( isinstance(subject, BNode) or
-             isinstance(predicate, BNode) or 
-             isinstance(obj, BNode) ): 
-            raise Exception("SPARQLStore does not support Bnodes! See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes")
-
+        if (isinstance(subject, BNode) or
+           isinstance(predicate, BNode) or
+           isinstance(obj, BNode)):
+            raise Exception(
+                "SPARQLStore does not support Bnodes! See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes")
 
         triple = "%s %s %s ." % (subject.n3(), predicate.n3(), obj.n3())
         if self.context_aware and context is not None:
@@ -517,13 +524,13 @@ class SPARQLUpdateStore(SPARQLStore):
 
     def listToStore():
         query = ""
-        #for i in spos:
+        # for i in spos:
         #    (subject, predicate, obj) = i
         #    triple = "%s %s %s ." % (subject.n3(), predicate.n3(), obj.n3())
         #    query += triple
 
         insert_query = "INSERT DATA { %s }" % query
-        
+
         return insert_query
 
     def add_graph(self, graph):
@@ -540,11 +547,11 @@ class SPARQLUpdateStore(SPARQLStore):
         for spoc in quads:
             (subject, predicate, obj, context) = spoc
 
-            if ( isinstance(subject, BNode) or
-                 isinstance(predicate, BNode) or 
-                 isinstance(obj, BNode) ): 
-                raise Exception("SPARQLStore does not support Bnodes! See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes")
-
+            if (isinstance(subject, BNode) or
+               isinstance(predicate, BNode) or
+               isinstance(obj, BNode)):
+                raise Exception(
+                    "SPARQLStore does not support Bnodes! See http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes")
 
             triple = "%s %s %s ." % (subject.n3(), predicate.n3(), obj.n3())
             data += "INSERT DATA { GRAPH <%s> { %s } }\n" % (
@@ -583,7 +590,7 @@ class SPARQLUpdateStore(SPARQLStore):
 
     def _do_update(self, update):
         import urllib
-        if self.postAsEncoded:            
+        if self.postAsEncoded:
             update = urllib.urlencode({'update': update})
         self.connection.request(
             'POST', self.path, update.encode("utf-8"), self.headers)
@@ -601,7 +608,7 @@ class SPARQLUpdateStore(SPARQLStore):
         the update. Setting initBindings adds inline VALUEs to the
         beginning of every WHERE clause. By the SPARQL grammar, all
         operations that support variables (namely INSERT and DELETE)
-        require a WHERE clause. 
+        require a WHERE clause.
         Important: initBindings fails if the update contains the
         substring 'WHERE {' which does not denote a WHERE clause, e.g.
         if it is part of a literal.

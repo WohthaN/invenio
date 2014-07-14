@@ -1,21 +1,19 @@
 from lxml import etree
 
-from datadicts.datadict import DataDict
-from datadicts.record import Record
-from datadicts.person import Person
-from datadicts.contributor import Contributor
+from .datadicts.datadict import DataDict
+from .datadicts.record import Record
+from .datadicts.person import Person
+from .datadicts.contributor import Contributor
 
 from invenio.bibauthorid_general_utils import memoized, schedule_workers
 
 
 CFG = {
-    'STRUCTURE_XML':"./config/structure.xml",
+    'STRUCTURE_XML': "./config/structure.xml",
     'CFG_PROCESS_SLICE_SIZE': 10,
     'CFG_PROCESSES': 8,
-    'entity_map': {'record':Record, 'person':Person, 'contributor':Contributor}
+    'entity_map': {'record': Record, 'person': Person, 'contributor': Contributor}
 }
-
-
 
 
 @memoized
@@ -31,8 +29,9 @@ def get_configuration_map():
 
 
 def _printer(*args):
-    #print ' '.join(str(x) for x in args)
+    # print ' '.join(str(x) for x in args)
     pass
+
 
 def _generate_triples(datadict, identifier=None, graph_name=None):
     g = list()
@@ -41,7 +40,7 @@ def _generate_triples(datadict, identifier=None, graph_name=None):
     node = xml_map[type(datadict)]
     children = node.getchildren()
 
-    _printer( 'Exporting', datadict, ' ', identifier, ' ', graph_name)
+    _printer('Exporting', datadict, ' ', identifier, ' ', graph_name)
 
     if not identifier:
         identifier = datadict['URI'][0]
@@ -50,7 +49,7 @@ def _generate_triples(datadict, identifier=None, graph_name=None):
         graph_name = identifier
 
     for c in children:
-        _printer( '   children ', c)
+        _printer('   children ', c)
         tag = c.tag
         try:
             data = datadict[tag]
@@ -62,17 +61,18 @@ def _generate_triples(datadict, identifier=None, graph_name=None):
         ont = c.attrib["ont"]
 
         if isinstance(data[0], DataDict):
-            for i,d in enumerate(data):
+            for i, d in enumerate(data):
                 bnodeid = 'BN:%s:%s' % (str(identifier), str(i))
-                _printer( '     exporting data', identifier, ' ', ont, ' ', bnodeid)
-                g.append( (('URI', identifier), ('URI', ont), ('Literal', bnodeid), ('URI', graph_name)))
+                _printer('     exporting data', identifier, ' ', ont, ' ', bnodeid)
+                g.append((('URI', identifier), ('URI', ont), ('Literal', bnodeid), ('URI', graph_name)))
                 g += _generate_triples(d, bnodeid, graph_name)
         else:
             for d in data:
-                _printer( '     exporting data', identifier, ' ', ont, ' ', d)
-                g.append( (('URI', identifier), ('URI', ont), ('Literal', d), ('URI', graph_name)))
+                _printer('     exporting data', identifier, ' ', ont, ' ', d)
+                g.append((('URI', identifier), ('URI', ont), ('Literal', d), ('URI', graph_name)))
 
     return g
+
 
 def _generate(datadicts):
     g = list()
@@ -90,7 +90,7 @@ def generate_triples(jobs_list):
     jobs = [entity_map[i[0]](i[1]) for i in jobs_list]
     return _generate(jobs)
 
-#TODO: modify schedule_workers to pass around result values
+# TODO: modify schedule_workers to pass around result values
 #     sl = CFG_PROCESS_SLICE_SIZE
 #    jobs = [jobs[x:x+sl] for x in range(0,len(jobs)+1,sl)]
 #    return schedule_workers(_generate_jobs, jobs, CFG_PROCESSES)

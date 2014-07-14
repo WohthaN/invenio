@@ -3,7 +3,9 @@ from invenio.bibauthorid_dbinterface import get_name_by_bibref, get_ordered_auth
 
 from datadict import DataDict, NotExistent
 
+
 class Person(DataDict):
+
     def __str__(self):
         return self._get_personid()[0]
 
@@ -14,10 +16,10 @@ class Person(DataDict):
             raise NotExistent("Person %s does not seem to exists!")
 
         self.map = {
-            'person' : self._person,
-            'personid' : self._get_personid,
-            'id' : self._get_personid,
-            'name' : self._get_name,
+            'person': self._person,
+            'personid': self._get_personid,
+            'id': self._get_personid,
+            'name': self._get_name,
             'URI': self._get_uri,
             'orcid': self._get_orcid
         }
