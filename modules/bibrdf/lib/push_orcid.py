@@ -1,7 +1,7 @@
 from invenio.bibauthorid_dbinterface import get_records_of_authors, get_orcid_id_of_author
 from invenio.webauthorprofile_orcidutils import get_dois_from_orcid, get_access_token_from_orcid
 from record import Record
-from orcid_config import *
+from .orcid_config import *
 
 
 import urlparse
@@ -22,28 +22,32 @@ import pprint
 
 from jinja2 import FileSystemLoader, Environment
 
+
 class Push_to_orcid():
+
     def __init__(self, access_token=None):
         if access_token:
             self.access_token = access_token
         else:
-            orcid_params = {"client_id" :CFG_CLIENT_ID,
-                            "client_secret" : CFG_CLIENT_SECRET,
-                            "grant_type" : "authorization_code",
-                            "code" : '',
-                            "redirect_url" : "https://developers.google.com/oauthplayground",
-                            "scope" : "/orcid-works/create",
+            orcid_params = {"client_id": CFG_CLIENT_ID,
+                            "client_secret": CFG_CLIENT_SECRET,
+                            "grant_type": "authorization_code",
+                            "code": '',
+                            "redirect_url": "https://developers.google.com/oauthplayground",
+                            "scope": "/orcid-works/create",
                             }
 
             self.access_token = get_access_token_from_orcid(orcid_params)
 
+
 class Push_orcid():
-    def __init__(self, personid, orcid = None, access_token = None):
-        #set ORCID urls
+
+    def __init__(self, personid, orcid=None, access_token=None):
+        # set ORCID urls
         self.url = CFG_ORCID_URL
         self.apiurl = CFG_ORCID_API_URL
 
-        #for manual testing
+        # for manual testing
         if not orcid or not access_token:
             self.username = CFG_ORCID_USERNAME
             self.password = CFG_ORCID_PASSWORD
@@ -79,8 +83,8 @@ class Push_orcid():
                         print 'identifier: ', identifier, '\n'
                         print identifier['work-external-identifier-type']
                         if identifier['work-external-identifier-type'] == 'OTHER_ID':
-                            #print 'kur\n'
-                            #print identifier['work-external-identifier-id']['value']
+                            # print 'kur\n'
+                            # print identifier['work-external-identifier-id']['value']
 
                             ext_identifiers.append(identifier['work-external-identifier-id']['value'])
                             print '===================='
@@ -90,24 +94,24 @@ class Push_orcid():
         except:
             pass
 
-        #self.ext_identifiers = json.loads(_get_public_data_from_orcid_public(self.orcid))
+        # self.ext_identifiers = json.loads(_get_public_data_from_orcid_public(self.orcid))
 
-        #print "==============="
-        #print "test"
-        #print "ext_identifiers: ", self.ext_identifiers
+        # print "==============="
+        # print "test"
+        # print "ext_identifiers: ", self.ext_identifiers
 
-        #print "dois: ", dois
+        # print "dois: ", dois
         for record_id in record_ids:
             rec = Record(record_id)
-            #print "rec['doi']: ", rec['doi']
+            # print "rec['doi']: ", rec['doi']
             if not any(d in dois for d in rec['doi']):
                 if not any(ext in ext_identifiers for ext in rec['id']):
                     recs.append(Record(record_id))
-            #else:
-                #print "doi already in"
+            # else:
+                # print "doi already in"
             self.recs = recs
 
-        #print "recs: ", recs
+        # print "recs: ", recs
         self.export_records_to_xml(recs)
         self.push_file_to_orcid()
         recs = None
@@ -115,7 +119,7 @@ class Push_orcid():
         ext_identifiers = None
 
     def _set_cookie(self):
-        params = urllib.urlencode({'userId' : self.username, 'password' : self.password})
+        params = urllib.urlencode({'userId': self.username, 'password': self.password})
 
         c = pycurl.Curl()
         c.setopt(pycurl.URL, "%s/signin/auth.json" % self.url)
@@ -127,7 +131,8 @@ class Push_orcid():
 
     def _request_autorization_code(self):
         c = pycurl.Curl()
-        url = '%s/oauth/authorize?client_id=%s&response_type=code&scope=/orcid-works/create&redirect_uri=https://developers.google.com/oauthplayground' % (self.url, self.client_id)
+        url = '%s/oauth/authorize?client_id=%s&response_type=code&scope=/orcid-works/create&redirect_uri=https://developers.google.com/oauthplayground' % (
+            self.url, self.client_id)
         c.setopt(pycurl.URL, url)
         c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
 
@@ -135,7 +140,7 @@ class Push_orcid():
 
     def _grant_authorization(self):
         headers = BytesIO()
-        params = urllib.urlencode({'user_oauth_approval' : 'true'})
+        params = urllib.urlencode({'user_oauth_approval': 'true'})
 
         c = pycurl.Curl()
         c.setopt(pycurl.URL, "%s/oauth/authorize" % self.url)
@@ -161,11 +166,11 @@ class Push_orcid():
 
     def _get_access_token(self):
         data = BytesIO()
-        params = urllib.urlencode({"client_id" : self.client_id,
-                                   "client_secret" : self.client_secret,
-                                   "grant_type" : "authorization_code",
-                                   "code" : self.authorization_code,
-                                   "redirect_url" : "https://developers.google.com/oauthplayground"
+        params = urllib.urlencode({"client_id": self.client_id,
+                                   "client_secret": self.client_secret,
+                                   "grant_type": "authorization_code",
+                                   "code": self.authorization_code,
+                                   "redirect_url": "https://developers.google.com/oauthplayground"
                                    })
 
         c = pycurl.Curl()
@@ -192,16 +197,24 @@ class Push_orcid():
         c.setopt(pycurl.URL, url)
         c.setopt(pycurl.READFUNCTION, f.read)
         c.setopt(pycurl.POSTFIELDS, f.read())
-        c.setopt(pycurl.HTTPHEADER, ["Content-Type: application/orcid+xml", "Authorization: Bearer %s" % self.access_token])
+        c.setopt(
+            pycurl.HTTPHEADER,
+            ["Content-Type: application/orcid+xml",
+                "Authorization: Bearer %s" % self.access_token])
 
         c.perform()
 
-    def export_records_to_xml(self, datadicts_list, template_file='orcid.xml', config_dir='.', output_file='orciddata.xml'):
+    def export_records_to_xml(
+        self,
+        datadicts_list,
+        template_file='orcid.xml',
+        config_dir='.',
+            output_file='orciddata.xml'):
         env = Environment(loader=FileSystemLoader(config_dir), auto_reload=True)
         template = env.get_template('orcid.xml')
         with open(output_file, 'w') as dest:
-            dest.writelines(template.render({'records':datadicts_list}))
+            dest.writelines(template.render({'records': datadicts_list}))
 
 if __name__ == "__main__":
-    #just for testing
+    # just for testing
     p = Push_orcid(524288)

@@ -5,7 +5,9 @@ from invenio.bibauthorid_dbinterface import get_all_signatures_of_paper, _get_do
 
 from datadict import DataDict, NotExistent
 
+
 class Record(DataDict):
+
     def __str__(self):
         return self._get_recid()[0]
 
@@ -17,39 +19,39 @@ class Record(DataDict):
 
         self.recid = recid
         self.map = {
-            'record' : self._get_recid,
-            'id' : self._get_recid,
-            'title' : self._get_title,
-            'subtitle' : self._get_subtitle,
-            'date' : self._get_date,
+            'record': self._get_recid,
+            'id': self._get_recid,
+            'title': self._get_title,
+            'subtitle': self._get_subtitle,
+            'date': self._get_date,
             'date_year': self._get_date_year,
             'date_month': self._get_date_month,
             'date_day': self._get_date_day,
-            'publication-date' : self._get_date,
+            'publication-date': self._get_date,
             'contributor': self._get_contributor,
             'URI': self._get_uri,
             'doi': self._get_doi,
-            'isbn' : self._get_isbn,
-            'issn' : self._get_issn,
-            'identifier' : self._get_standart_identifier,
-            'source' : self._get_external_key_source,
-            'language' : self._get_language,
-            'alternative' : self._get_old_title,
-            'edition' : self._get_edition,
-            'publisher' : self._get_publisher,
-            'pages' : self._get_pages,
-            'bookseries' : self._get_book_series,
-            'volume' : self._get_volume,
-            'degree' : self._get_degree_type,
-            'abstract' : self._get_abstract_text,
-            'license' : self._get_license_statement,
-            'subject' : self._get_free_keyword_and_formal_specification,
-            'pages' : self._get_pub_info_pages,
-            'volume' : self._get_pub_info_volume,
-            'issue' : self._get_pub_info_issue,
-            'ispartof' : self._get_pub_info_conf_pappers,
-            'reference' : self._get_reference,
-            'work_type' : self._get_work_type,
+            'isbn': self._get_isbn,
+            'issn': self._get_issn,
+            'identifier': self._get_standart_identifier,
+            'source': self._get_external_key_source,
+            'language': self._get_language,
+            'alternative': self._get_old_title,
+            'edition': self._get_edition,
+            'publisher': self._get_publisher,
+            'pages': self._get_pages,
+            'bookseries': self._get_book_series,
+            'volume': self._get_volume,
+            'degree': self._get_degree_type,
+            'abstract': self._get_abstract_text,
+            'license': self._get_license_statement,
+            'subject': self._get_free_keyword_and_formal_specification,
+            'pages': self._get_pub_info_pages,
+            'volume': self._get_pub_info_volume,
+            'issue': self._get_pub_info_issue,
+            'ispartof': self._get_pub_info_conf_pappers,
+            'reference': self._get_reference,
+            'work_type': self._get_work_type,
         }
 
     def keys(self):
@@ -75,15 +77,15 @@ class Record(DataDict):
 
     def _get_contributor(self):
         signatures = get_all_signatures_of_paper(self.recid)
-        signatures = [([int(y) for y in x['bibref'].split(':')]+[self.recid]) for x in signatures]
+        signatures = [([int(y) for y in x['bibref'].split(':')] + [self.recid]) for x in signatures]
         associations = get_personid_signature_association_for_paper(self.recid)
         contributors = list()
         for table, ref, rec in signatures:
             try:
-                pid = associations[str(table)+':'+str(ref)]
+                pid = associations[str(table) + ':' + str(ref)]
             except KeyError:
                 pid = None
-            contributors.append((table,ref,rec,pid))
+            contributors.append((table, ref, rec, pid))
         return self.sanitize([Contributor(table, ref, rec, pid) for table, ref, rec, pid in contributors])
 
     def _get_date(self):
@@ -115,8 +117,9 @@ class Record(DataDict):
 
     def _get_isbn(self):
         return self.sanitize(([record_get_field_value(self.recstruct, '020', '', '', 'a')]
-                        +
-                        [record_get_field_value(self.recstruct, '773', '', '', 'z')]))
+                              +
+                              [record_get_field_value(self.recstruct, '773', '', '', 'z')]))
+
     def _get_issn(self):
         return self.sanitize([record_get_field_value(self.recstruct, '022', '', '', 'a')])
 
@@ -131,8 +134,8 @@ class Record(DataDict):
 
     def _get_old_title(self):
         return self.sanitize(([record_get_field_value(self.recstruct, '246', '', '', 'a')]
-                        +
-                        [record_get_field_value(self.recstruct, '247', '', '', 'a')]))
+                              +
+                              [record_get_field_value(self.recstruct, '247', '', '', 'a')]))
 
     def _get_edition(self):
         return self.sanitize([record_get_field_value(self.recstruct, '250', '', '', 'a')])
@@ -160,8 +163,8 @@ class Record(DataDict):
 
     def _get_free_keyword_and_formal_specification(self):
         return self.sanitize(([record_get_field_value(self.recstruct, '6531', '', '', 'a')]
-                        +
-                        [record_get_field_value(self.recstruct, '690C', '', '', 'a')]))
+                              +
+                              [record_get_field_value(self.recstruct, '690C', '', '', 'a')]))
 
     def _get_pub_info_pages(self):
         return self.sanitize([record_get_field_value(self.recstruct, '773', '', '', 'c')])
@@ -180,26 +183,26 @@ class Record(DataDict):
 
     def _get_work_type(self):
 
-        a = record_get_field_values(self.recstruct, '980','','','a')
+        a = record_get_field_values(self.recstruct, '980', '', '', 'a')
         if 'book' in [x.lower() for x in a]:
             return self.sanitize(['Book'])
 
-        a = record_get_field_values(self.recstruct, '502','','','b')
+        a = record_get_field_values(self.recstruct, '502', '', '', 'b')
         if 'phd' in [x.lower() for x in a]:
             return self.sanitize(['Dissertation'])
 
-        a = record_get_field_values(self.recstruct, '980','','','a')
+        a = record_get_field_values(self.recstruct, '980', '', '', 'a')
         if 'conferencepaper' in [x.lower() for x in a]:
             return self.sanitize(['Conference-Paper'])
 
-        a = record_get_field_values(self.recstruct, '980','','','a')
+        a = record_get_field_values(self.recstruct, '980', '', '', 'a')
         if 'data' in [x.lower() for x in a]:
             return self.sanitize(['Dataset'])
 
-        a = record_get_field_values(self.recstruct, '980','','','a')
+        a = record_get_field_values(self.recstruct, '980', '', '', 'a')
         published_flag = 'published' in [x.lower() for x in a]
         if (published_flag and
-            record_get_field_values(self.recstruct, '773','','','p')):
+                record_get_field_values(self.recstruct, '773', '', '', 'p')):
             return self.sanitize(['Journal-Article'])
 
         a = record_get_field_instances(self.recstruct, '035')
@@ -217,32 +220,32 @@ class Record(DataDict):
         return self.sanitize([''])
 
 
-#marc field  |  description          |   rdf mapping
-#020__$$a    |  ISBN                 |  bibo:isbn
-#022__$$a    |  ISSN                 |  bibo:issn
-#0247_$$a    | standard identifier   |  dc:identifier/bibo:doi
-#035__$$9    | external key source   |  dcterms:source
-#041__$$a    | language              | dc(terms):language
-#100__$$a    | author                | dc:contributor
-#100__$$u    | affiliation           | foaf: organisation (foaf:name) [might need to be defined extra just as all the other author information]
-#700__$$a    | author/other authors  |  dc:contributor
-#245__$$a    | title                 | dc:title
-#246__$$a    | old title             | dcterms:alternative
-#247__$$a    | old title             | dcterms:alternative
-#250__$$a    | edition               | bibo:edition
-#260__$$b    | publisher             | dc:publisher
-#269__$$c    | date                  | dc:date
-#300__$$a    | pages                 | bibo:numPages
-#490__$$a    | book series           | bibo:edition
-#490__$$v    | volume                | bibo:locator
-#502__$$b    | degree_type           | bibo:degree
-#520__$$a    | abstract_text         | dcterms:abstract
-#540__$$a    | license_statement     | dcterms:license
-#6531_$$a    | free keyword          | dc:subject
-#690C_$$a    | formal classification | dc:subject
-#773__$$c    | pub_info pages        | bibo:pageStart bibo:pageEnd
-#773__$$v    | pub_info volume       | bibo:volume
-#773__$$n    | pub_info issue        | bibo:issue
-#773__$$t    | Pub_info conf papers  | dcterms:ispPartOf
-#773__$$z    | ISBN                  | bibo:isbn
-#999C5$$     | reference		    | dcterms:reference [might need more definition, as there are 10 possible subfields]
+# marc field  |  description          |   rdf mapping
+# 020__$$a    |  ISBN                 |  bibo:isbn
+# 022__$$a    |  ISSN                 |  bibo:issn
+# 0247_$$a    | standard identifier   |  dc:identifier/bibo:doi
+# 035__$$9    | external key source   |  dcterms:source
+# 041__$$a    | language              | dc(terms):language
+# 100__$$a    | author                | dc:contributor
+# 100__$$u    | affiliation           | foaf: organisation (foaf:name) [might need to be defined extra just as all the other author information]
+# 700__$$a    | author/other authors  |  dc:contributor
+# 245__$$a    | title                 | dc:title
+# 246__$$a    | old title             | dcterms:alternative
+# 247__$$a    | old title             | dcterms:alternative
+# 250__$$a    | edition               | bibo:edition
+# 260__$$b    | publisher             | dc:publisher
+# 269__$$c    | date                  | dc:date
+# 300__$$a    | pages                 | bibo:numPages
+# 490__$$a    | book series           | bibo:edition
+# 490__$$v    | volume                | bibo:locator
+# 502__$$b    | degree_type           | bibo:degree
+# 520__$$a    | abstract_text         | dcterms:abstract
+# 540__$$a    | license_statement     | dcterms:license
+# 6531_$$a    | free keyword          | dc:subject
+# 690C_$$a    | formal classification | dc:subject
+# 773__$$c    | pub_info pages        | bibo:pageStart bibo:pageEnd
+# 773__$$v    | pub_info volume       | bibo:volume
+# 773__$$n    | pub_info issue        | bibo:issue
+# 773__$$t    | Pub_info conf papers  | dcterms:ispPartOf
+# 773__$$z    | ISBN                  | bibo:isbn
+# 999C5$$     | reference		    | dcterms:reference [might need more definition, as there are 10 possible subfields]
